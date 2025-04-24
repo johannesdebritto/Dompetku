@@ -3,7 +3,7 @@ import 'package:dompetku_application/homepage/noted.dart';
 import 'package:dompetku_application/homepage/progres.dart';
 import 'package:dompetku_application/homepage/total.dart';
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_svg/svg.dart';
 
 class BerandaScreen extends StatefulWidget {
   const BerandaScreen({super.key});
@@ -29,10 +29,12 @@ class _BerandaScreenState extends State<BerandaScreen> {
                     const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
                 child: Row(
                   children: [
-                    Icon(
-                      LucideIcons.layoutDashboard,
-                      size: 30,
-                      color: Colors.green[900],
+                    SvgPicture.asset(
+                      'assets/images/dashboard.svg',
+                      height: 30,
+                      width: 30,
+                      color: const Color.fromARGB(
+                          255, 0, 0, 0), // kasih warna kalau SVG-nya support
                     ),
                     const SizedBox(width: 8),
                     const Text(

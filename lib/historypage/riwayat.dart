@@ -2,6 +2,7 @@ import 'package:dompetku_application/historypage/riwayat._total.dart';
 import 'package:dompetku_application/historypage/riwayat_diagarm.dart';
 import 'package:dompetku_application/historypage/riwayat_garis.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class RiwayatScreen extends StatefulWidget {
@@ -28,11 +29,12 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                     const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
                 child: Row(
                   children: [
-                    Icon(
-                      LucideIcons
-                          .history, // Ganti icon sesuai dengan permintaan
-                      size: 30,
-                      color: Colors.green[900],
+                    SvgPicture.asset(
+                      'assets/images/riwayat.svg',
+                      height: 30,
+                      width: 30,
+                      color: const Color.fromARGB(
+                          255, 0, 0, 0), // kasih warna kalau SVG-nya support
                     ),
                     const SizedBox(width: 8),
                     const Text(
