@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart'; // Pastikan sudah menambahkan package lucide_icons
+import 'package:flutter_svg/flutter_svg.dart'; // Pastikan sudah menambahkan package flutter_svg
 
 class FilterTransaksiScreen extends StatefulWidget {
-  const FilterTransaksiScreen({super.key});
-
   @override
   State<FilterTransaksiScreen> createState() => _FilterTransaksiScreenState();
 }
@@ -15,15 +13,15 @@ class _FilterTransaksiScreenState extends State<FilterTransaksiScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0),
+      padding: EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          // Tombol Pemasukan
+          // Tombol Pemasukan dengan ikon SVG
           _buildFilterButton(
             'Pemasukan',
             isActive: isPemasukanActive,
-            icon: LucideIcons.plusCircle,
+            icon: 'assets/images/pemasukan2.svg', // Path ke SVG Pemasukan
             onPressed: () {
               setState(() {
                 isPemasukanActive = true; // Pemasukan aktif
@@ -31,12 +29,12 @@ class _FilterTransaksiScreenState extends State<FilterTransaksiScreen> {
             },
           ),
 
-          // Tombol Pengeluaran
+          // Tombol Pengeluaran dengan ikon SVG
           _buildFilterButton(
             'Pengeluaran',
             isActive:
                 !isPemasukanActive, // Pengeluaran aktif jika Pemasukan tidak aktif
-            icon: LucideIcons.minusCircle,
+            icon: 'assets/images/pengeluaran2.svg', // Path ke SVG Pengeluaran
             onPressed: () {
               setState(() {
                 isPemasukanActive = false; // Pengeluaran aktif
@@ -48,42 +46,46 @@ class _FilterTransaksiScreenState extends State<FilterTransaksiScreen> {
     );
   }
 
-  // Fungsi untuk membuat tombol dengan style yang sesuai
+  // Fungsi untuk membuat tombol dengan style yang lebih modern
   Widget _buildFilterButton(String text,
       {required bool isActive,
-      required IconData icon,
+      required String icon,
       required VoidCallback onPressed}) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         primary: isActive
-            ? Colors.green
-            : Colors.white, // Warna tombol aktif hijau, tidak aktif putih
+            ? Colors.green.shade600 // Warna tombol aktif hijau lebih gelap
+            : Colors.white, // Warna tombol tidak aktif putih
         onPrimary: isActive
             ? Colors.white
-            : Colors.green, // Warna teks aktif putih, tidak aktif hijau
-        side:
-            const BorderSide(color: Colors.green, width: 3), // Garis tepi hijau
+            : Colors
+                .green.shade600, // Warna teks aktif putih, tidak aktif hijau
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15), // Sudut tumpul
+          borderRadius: BorderRadius.circular(20), // Lebih round untuk tombol
         ),
-        padding: const EdgeInsets.symmetric(
-            vertical: 10.0, horizontal: 20.0), // Padding tombol
+        padding: EdgeInsets.symmetric(
+            vertical: 12.0, horizontal: 20.0), // Padding tombol lebih besar
+        elevation: 5, // Memberi efek bayangan tombol
       ),
       onPressed: onPressed,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon,
-              color: isActive
-                  ? Colors.white
-                  : Colors.green), // Warna icon sesuai status aktif
-          const SizedBox(width: 8),
+          SvgPicture.asset(
+            icon, // Menggunakan SVG untuk ikon tanpa mengubah warna
+            width: 20,
+            height: 20,
+          ),
+          SizedBox(width: 10), // Jarak antara icon dan teks
           Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Inter', // Font Inter
               fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600, // Font bold tapi tidak terlalu tebal
+              color: isActive
+                  ? Colors.black // Teks aktif jadi hitam
+                  : Colors.green.shade600, // Teks tidak aktif jadi hijau
             ),
           ),
         ],

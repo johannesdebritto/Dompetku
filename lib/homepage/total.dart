@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class TotalScreen extends StatefulWidget {
-  const TotalScreen({super.key});
-
   @override
   State<TotalScreen> createState() => _TotalScreenState();
 }
@@ -12,74 +10,87 @@ class _TotalScreenState extends State<TotalScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFF8E1), // krem
+          color: Colors.black, // Latar item
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.07),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 16,
-              offset: const Offset(0, 6),
+              offset: Offset(0, 6),
             ),
           ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start, // Rata kiri semua
           children: [
+            // Judul di tengah
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SvgPicture.asset('assets/images/rekap.svg',
-                    width: 40, height: 40),
-                const SizedBox(width: 12),
-                const Text(
+                SvgPicture.asset(
+                  'assets/images/rekap.svg',
+                  width: 40,
+                  height: 40,
+                ),
+                SizedBox(width: 12),
+                Text(
                   'Rekap Keuangan',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
                     fontFamily: 'Inter',
-                    color: Colors.black87,
+                    color: Colors.white,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            _buildItem('assets/images/pemasukan1.svg', 'Pemasukan', 'Rp. 0',
-                Colors.green.shade800),
-            const SizedBox(height: 1),
-            _buildItem('assets/images/pengeluaran1.svg', 'Pengeluaran', 'Rp. 0',
-                Colors.red),
-            const SizedBox(height: 1),
-            _buildItem('assets/images/total.svg', 'Total', 'Rp. 0', Colors.blue,
-                isBold: true),
+
+            SizedBox(height: 10), // Lebih dekatkan jaraknya dengan Total
+
+            // Baris icon Total + tulisan Total, rata kiri
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  'assets/images/total.svg',
+                  width: 40,
+                  height: 40,
+                ),
+                SizedBox(width: 12),
+                Text(
+                  'Total',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Inter',
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(
+                height: 4), // Lebih dekatkan jarak antara Total dan nominal
+
+            // Nominal di bawah, rata kiri
+            Text(
+              'Rp. 0',
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Inter',
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildItem(String iconPath, String label, String amount, Color color,
-      {bool isBold = false}) {
-    return Row(
-      children: [
-        SvgPicture.asset(iconPath, width: 40, height: 40),
-        const SizedBox(width: 12),
-        Flexible(
-          child: Text(
-            '$label: $amount',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-              fontFamily: 'Inter',
-              color: color,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

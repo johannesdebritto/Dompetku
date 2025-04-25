@@ -66,7 +66,7 @@ class _MainNavigationState extends State<MainNavigation> {
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             isScrollControlled: true,
-            builder: (context) => const ModalTransaksiScreen(),
+            builder: (context) => ModalTransaksiScreen(),
           );
         },
         backgroundColor: Colors.blueAccent,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ModaltabunganScreen extends StatefulWidget {
-  const ModaltabunganScreen({super.key});
   @override
   State<ModaltabunganScreen> createState() => _ModaltabunganScreenState();
 }
@@ -22,8 +21,7 @@ class _ModaltabunganScreenState extends State<ModaltabunganScreen> {
         borderRadius: BorderRadius.circular(8),
         color: Colors.white,
         boxShadow: [
-          BoxShadow(
-              color: Colors.black12, blurRadius: 4, offset: const Offset(2, 2))
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2, 2))
         ],
       );
 
@@ -40,17 +38,16 @@ class _ModaltabunganScreenState extends State<ModaltabunganScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: boldStyle),
-        const SizedBox(height: 4),
+        SizedBox(height: 4),
         Row(
           children: [
             if (prefix != null)
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                 decoration: _decoration,
                 child: Text(prefix, style: baseTextStyle),
               ),
-            if (prefix != null) const SizedBox(width: 8),
+            if (prefix != null) SizedBox(width: 8),
             Expanded(
               child: Container(
                 decoration: _decoration,
@@ -60,7 +57,7 @@ class _ModaltabunganScreenState extends State<ModaltabunganScreen> {
                   onTap: onTap,
                   keyboardType: keyboardType,
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
                     border: InputBorder.none,
                     hintText: hint ?? 'Masukkan $label',
                     hintStyle: baseTextStyle,
@@ -82,7 +79,7 @@ class _ModaltabunganScreenState extends State<ModaltabunganScreen> {
           backgroundColor: color,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          padding: const EdgeInsets.symmetric(vertical: 15),
+          padding: EdgeInsets.symmetric(vertical: 15),
         ),
         onPressed: onPressed,
         child: Text(label,
@@ -111,7 +108,7 @@ class _ModaltabunganScreenState extends State<ModaltabunganScreen> {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,46 +116,46 @@ class _ModaltabunganScreenState extends State<ModaltabunganScreen> {
             Row(
               children: [
                 Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: EdgeInsets.all(8),
                     decoration: _decoration,
-                    child: const Icon(Icons.savings, color: Colors.black54)),
-                const SizedBox(width: 8),
+                    child: Icon(Icons.savings, color: Colors.black54)),
+                SizedBox(width: 8),
                 Text('Catat Tabungan',
                     style: GoogleFonts.inter(
                         fontSize: 18, fontWeight: FontWeight.bold)),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             _buildInputField(
                 label: 'Nama Tabungan', controller: namaTabunganController),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             _buildInputField(
                 label: 'Target Nominal',
                 controller: targetNominalController,
                 prefix: 'Rp',
                 keyboardType: TextInputType.number),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             _buildInputField(
               label: 'Tanggal Mulai',
               controller: tanggalMulaiController,
               readOnly: true,
               onTap: () => _selectDate(tanggalMulaiController),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             _buildInputField(
               label: 'Tanggal Target',
               controller: tanggalTargetController,
               readOnly: true,
               onTap: () => _selectDate(tanggalTargetController),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             _buildInputField(label: 'Catatan', controller: catatanController),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             Row(
               children: [
                 _buildButton('Batal', Colors.red, () => Navigator.pop(context)),
-                const SizedBox(width: 10),
-                _buildButton('Simpan', const Color(0xFF7F56D9), () {
+                SizedBox(width: 10),
+                _buildButton('Simpan', Color(0xFF7F56D9), () {
                   print('Nama: ${namaTabunganController.text}');
                   print('Target: ${targetNominalController.text}');
                   print('Mulai: ${tanggalMulaiController.text}');

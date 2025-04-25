@@ -2,14 +2,9 @@ import 'package:dompetku_application/homepage/filter_transaksi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class KontenBawahScreen extends StatefulWidget {
+class KontenBawahScreen extends StatelessWidget {
   const KontenBawahScreen({super.key});
 
-  @override
-  State<KontenBawahScreen> createState() => _KontenBawahScreenState();
-}
-
-class _KontenBawahScreenState extends State<KontenBawahScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -39,7 +34,7 @@ class _KontenBawahScreenState extends State<KontenBawahScreen> {
             ],
           ),
           const SizedBox(height: 14),
-          const FilterTransaksiScreen(),
+          FilterTransaksiScreen(),
         ],
       ),
     );

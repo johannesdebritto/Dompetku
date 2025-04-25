@@ -2,6 +2,7 @@ import 'package:dompetku_application/homepage/kontenbawah.dart';
 import 'package:dompetku_application/homepage/noted.dart';
 import 'package:dompetku_application/homepage/progres.dart';
 import 'package:dompetku_application/homepage/total.dart';
+import 'package:dompetku_application/homepage/transaksi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -49,9 +50,9 @@ class _BerandaScreenState extends State<BerandaScreen> {
                   ],
                 ),
               ),
-              const TotalScreen(),
+              TotalScreen(),
+              TransaksiScreen(),
               const SizedBox(height: 2),
-              // Tambahkan widget progress di sini
               const ProgressWidget(), // <--- panggil ProgressWidget-nya
               const SizedBox(height: 2), // beri jarak sebelum konten bawah
               const NoteWidget(),
