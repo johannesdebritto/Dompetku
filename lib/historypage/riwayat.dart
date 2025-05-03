@@ -16,7 +16,10 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
       appBar: null,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.only(bottom: 20), // biar nggak mentok bawah
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).padding.bottom +
+                100, // tambahkan padding bawah
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
