@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class RiwayatFilterScreen extends StatefulWidget {
   final Function(String) onFilterChanged;
 
-  const RiwayatFilterScreen({super.key, required this.onFilterChanged});
+  RiwayatFilterScreen({super.key, required this.onFilterChanged});
 
   @override
   State<RiwayatFilterScreen> createState() => _RiwayatFilterScreenState();
@@ -28,13 +28,14 @@ class _RiwayatFilterScreenState extends State<RiwayatFilterScreen> {
       children: filters.map((filter) {
         final isSelected = selectedFilter == filter;
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          padding: EdgeInsets.symmetric(horizontal: 4.0),
           child: ElevatedButton(
             onPressed: () => _setFilter(filter),
             style: ElevatedButton.styleFrom(
-              backgroundColor: isSelected ? Colors.blue : Colors.grey[300],
+              backgroundColor:
+                  isSelected ? Colors.green.shade600 : Colors.grey[300],
               foregroundColor: isSelected ? Colors.white : Colors.black,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
             child: Text(filter),
           ),

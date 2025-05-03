@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 
 class DiagramScreen extends StatefulWidget {
-  const DiagramScreen({super.key});
+  DiagramScreen({Key? key}) : super(key: key);
 
   @override
   State<DiagramScreen> createState() => _DiagramScreenState();
@@ -15,61 +15,63 @@ class _DiagramScreenState extends State<DiagramScreen> {
   };
 
   final colorList = <Color>[
-    Colors.green,
-    Colors.red,
+    Colors.greenAccent, // More vibrant green
+    Colors.redAccent, // More vibrant red
   ];
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: EdgeInsets.all(20.0),
       child: Center(
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.black, // Changed the box color to black
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
+                color: Colors.black
+                    .withOpacity(0.5), // Darker shadow for modern effect
+                blurRadius: 12,
+                offset: Offset(0, 4),
               ),
             ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'DIAGRAM KEUANGAN',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 22, // Increased font size
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Inter',
+                  color: Colors.white, // Changed text color to white
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               PieChart(
                 dataMap: dataMap,
                 colorList: colorList,
                 chartType: ChartType.ring,
-                chartRadius: 120,
-                ringStrokeWidth: 30,
-                legendOptions: const LegendOptions(showLegends: false),
-                chartValuesOptions: const ChartValuesOptions(
+                chartRadius: 80, // Ukuran chart
+                ringStrokeWidth: 30, // Ketebalan ring
+                legendOptions: LegendOptions(showLegends: false),
+                chartValuesOptions: ChartValuesOptions(
                   showChartValuesInPercentage: true,
                   showChartValues: false,
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Column(
                 children: dataMap.entries.map((entry) {
-                  final color =
-                      entry.key == "Pemasukan" ? Colors.green : Colors.red;
+                  final color = entry.key == "Pemasukan"
+                      ? Colors.greenAccent
+                      : Colors.redAccent;
                   return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical:
-                            4), // kasih jarak kecil biar nggak dempet banget
+                    padding: EdgeInsets.symmetric(
+                        vertical: 4), // Small vertical spacing
                     child: Row(
                       children: [
                         Container(
@@ -80,13 +82,14 @@ class _DiagramScreenState extends State<DiagramScreen> {
                             shape: BoxShape.circle,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Text(
                           '${entry.key}: ${entry.value.toInt()}%',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.w500,
+                            color: Colors.white, // White text for labels
                           ),
                         ),
                       ],

@@ -1,4 +1,6 @@
 import 'package:dompetku_application/homepage/filter_transaksi.dart';
+import 'package:dompetku_application/transaksi/pemasukan.dart';
+import 'package:dompetku_application/transaksi/pengeluaran.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -10,7 +12,7 @@ class KontenBawahScreen extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: Colors.black,
+        color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
       padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
@@ -27,7 +29,7 @@ class KontenBawahScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black,
                   fontFamily: 'Inter',
                 ),
               ),
@@ -35,6 +37,11 @@ class KontenBawahScreen extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           FilterTransaksiScreen(),
+          const SizedBox(
+            height: 5,
+          ),
+          const PemasukanScreen(),
+          const PengeluaranScreen(),
         ],
       ),
     );

@@ -20,57 +20,84 @@ class BottomNavbarScreen extends StatefulWidget {
 class _BottomNavbarScreenState extends State<BottomNavbarScreen> {
   @override
   Widget build(BuildContext context) {
-    return BottomAppBar(
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 8,
-      child: SizedBox(
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(
-              icon: LucideIcons.home,
-              index: 0,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: BottomAppBar(
+          color: const Color(0xFF2D2F33),
+          elevation: 8,
+          child: SizedBox(
+            height: 40, // Tetap 30 seperti permintaanmu
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Transform.translate(
+                  offset: const Offset(0, -15), // Geser ke atas biar pas
+                  child: _buildNavItem(
+                    icon: LucideIcons.home,
+                    index: 0,
+                    label: 'Beranda',
+                  ),
+                ),
+                const SizedBox(width: 1), // ruang tengah
+                Transform.translate(
+                  offset: const Offset(0, -15),
+                  child: _buildNavItem(
+                    icon: LucideIcons.history,
+                    index: 2,
+                    label: 'Riwayat',
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 40), // ruang kosong di tengah
-            _buildNavItem(
-              icon: LucideIcons.history,
-              index: 2,
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildNavItem({required IconData icon, required int index}) {
+  Widget _buildNavItem({
+    required IconData icon,
+    required int index,
+    required String label,
+  }) {
     bool isSelected = widget.selectedIndex == index;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Animated Size untuk membuat perubahan ukuran lebih smooth
-        AnimatedSize(
-          duration: const Duration(milliseconds: 200), // Durasi animasi
-          curve: Curves.easeInOut, // Kurva animasi
-          child: IconButton(
-            icon: Icon(
-              icon,
-              color: isSelected ? Colors.blueAccent : Colors.grey[700],
-              size: isSelected ? 30 : 24, // Perbesar ukuran saat aktif
+    const Color iconColor = Color(0xFFC2E7FF);
+    const Color activeBgColor = Color(0xFF004A77);
+    const Color labelColor = Color(0xFFC4C7C5);
+
+    return GestureDetector(
+      onTap: () => widget.onItemTapped(index),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isSelected ? activeBgColor : Colors.transparent,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(16),
             ),
-            onPressed: () => widget.onItemTapped(index),
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: 24,
+            ),
           ),
-        ),
-        // Animated Container untuk underline
-        AnimatedContainer(
-          duration:
-              const Duration(milliseconds: 200), // Durasi animasi underline
-          curve: Curves.easeInOut,
-          width: isSelected ? 30 : 0, // Lebar underline berubah saat aktif
-          height: 2, // Tinggi underline
-          color: Colors.blueAccent, // Warna underline
-        ),
-      ],
+          // const SizedBox(height: 0),
+          // if (isSelected)
+          //   Text(
+          //     label,
+          //     style: const TextStyle(
+          //       color: labelColor,
+          //       fontSize: 10,
+          //     ),
+          //   ),
+        ],
+      ),
     );
   }
 }

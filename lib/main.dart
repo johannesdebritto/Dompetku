@@ -57,27 +57,45 @@ class _MainNavigationState extends State<MainNavigation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      body: Stack(
+        children: [
+          _pages[_selectedIndex],
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                BottomNavbarScreen(
+                  selectedIndex: _selectedIndex,
+                  onItemTapped: _onItemTapped,
+                  jumlahTombol: _pages.length,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      bottom: 40), // posisi FAB relatif ke BottomNavbar
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(20)),
+                        ),
+                        isScrollControlled: true,
+                        builder: (context) => ModalTransaksiScreen(),
+                      );
+                    },
+                    backgroundColor: Colors.blueAccent,
+                    child: const Icon(LucideIcons.plus, size: 30),
+                    shape: const CircleBorder(),
+                  ),
+                ),
+              ],
             ),
-            isScrollControlled: true,
-            builder: (context) => ModalTransaksiScreen(),
-          );
-        },
-        backgroundColor: Colors.blueAccent,
-        child: const Icon(LucideIcons.plus, size: 30),
-        shape: const CircleBorder(),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavbarScreen(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
-        jumlahTombol: _pages.length,
+          ),
+        ],
       ),
     );
   }
