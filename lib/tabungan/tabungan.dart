@@ -1,27 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class TabunganCardScreen extends StatefulWidget {
-  final double progress;
-  const TabunganCardScreen({super.key, required this.progress});
+class TabunganScreen extends StatelessWidget {
+  const TabunganScreen({super.key});
 
-  @override
-  State<TabunganCardScreen> createState() => _TabunganCardScreenState();
-}
-
-class _TabunganCardScreenState extends State<TabunganCardScreen> {
   @override
   Widget build(BuildContext context) {
     final formatter =
         NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
     final target = 500000.0;
-    final cardWidth = MediaQuery.of(context).size.width - 90;
 
-    Widget buildCard() {
+    Widget buildTabunganCard() {
       return Container(
-        width: cardWidth,
-        margin: const EdgeInsets.only(right: 16), // jarak antar card
-        padding: const EdgeInsets.all(16),
+        width: MediaQuery.of(context).size.width - 30, // Memperbesar lebar card
+        padding: const EdgeInsets.all(20), // Memperbesar padding card
         decoration: BoxDecoration(
           color: const Color(0xFFFDF6EC),
           borderRadius: BorderRadius.circular(16),
@@ -30,7 +22,7 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
               color: Colors.black12,
               blurRadius: 10,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: Column(
@@ -39,8 +31,8 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
             Row(
               children: [
                 Container(
-                  width: 28,
-                  height: 28,
+                  width: 40, // Memperbesar ukuran kotak nomor
+                  height: 40,
                   decoration: BoxDecoration(
                     color: Colors.black,
                     borderRadius: BorderRadius.circular(6),
@@ -51,28 +43,29 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
+                      fontSize: 18, // Memperbesar teks nomor
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12), // Menambah jarak antar elemen
                 const Text(
                   'Tabungan Maggot',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 22, // Memperbesar font judul
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const Spacer(),
                 Container(
-                  width: 32,
-                  height: 32,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
                     color: Colors.red,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: IconButton(
                     icon:
-                        const Icon(Icons.delete, color: Colors.white, size: 18),
+                        const Icon(Icons.delete, color: Colors.white, size: 22),
                     onPressed: () {
                       // Aksi saat tombol hapus ditekan
                     },
@@ -87,9 +80,11 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(formatter.format(0),
-                    style: const TextStyle(fontWeight: FontWeight.w600)),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 20)),
                 Text(formatter.format(target),
-                    style: const TextStyle(fontWeight: FontWeight.w600)),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 20)),
               ],
             ),
             const SizedBox(height: 6),
@@ -104,7 +99,8 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
                 ),
                 Container(
                   height: 20,
-                  width: (cardWidth - 32) * widget.progress, // biar sesuai card
+                  width: MediaQuery.of(context).size.width * 0.5 -
+                      48, // progress 50%
                   decoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(10),
@@ -113,7 +109,7 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
                 Positioned.fill(
                   child: Center(
                     child: Text(
-                      '${(widget.progress * 100).toStringAsFixed(0)}%',
+                      '50%',
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -136,14 +132,25 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
       );
     }
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          buildCard(),
-          buildCard(),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Halaman Tabungan'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Navigasi kembali
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            buildTabunganCard(),
+            const SizedBox(height: 16), // Jarak antar card
+            buildTabunganCard(),
+          ],
+        ),
       ),
     );
   }

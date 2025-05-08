@@ -6,11 +6,14 @@ import 'package:flutter_svg/svg.dart';
 
 class RiwyaatTotalScreen extends StatefulWidget {
   const RiwyaatTotalScreen({super.key});
+
   @override
   _RiwyaatTotalScreenState createState() => _RiwyaatTotalScreenState();
 }
 
 class _RiwyaatTotalScreenState extends State<RiwyaatTotalScreen> {
+  bool isPemasukanActive = true; // Status aktif awal
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,12 +43,23 @@ class _RiwyaatTotalScreenState extends State<RiwyaatTotalScreen> {
             ],
           ),
           const SizedBox(height: 14),
-          FilterTransaksiScreen(),
-          const SizedBox(
-            height: 5,
+
+          // 🔁 Gunakan FilterTransaksiScreen dengan callback
+          FilterTransaksiScreen(
+            isPemasukanActive: isPemasukanActive,
+            onFilterChanged: (bool isPemasukan) {
+              setState(() {
+                isPemasukanActive = isPemasukan;
+              });
+            },
           ),
-          const PemasukanScreen(),
-          const PengeluaranScreen(),
+
+          const SizedBox(height: 5),
+
+          // 👇 Tampilkan screen berdasarkan filter aktif
+          isPemasukanActive
+              ? const PemasukanScreen()
+              : const PengeluaranScreen(),
         ],
       ),
     );

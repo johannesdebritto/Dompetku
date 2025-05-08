@@ -1,4 +1,5 @@
 import 'package:dompetku_application/card/noted_card.dart';
+import 'package:dompetku_application/noted/noted_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -23,13 +24,21 @@ class NoteWidget extends StatelessWidget {
               ),
               const Spacer(),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  // Arahkan ke halaman NotedScreen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const NotedScreen()),
+                  );
+                },
                 child: const Text(
                   'Lihat semua',
                   style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.blue),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.blue,
+                  ),
                 ),
               ),
             ],

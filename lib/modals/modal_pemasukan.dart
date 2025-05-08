@@ -1,5 +1,8 @@
+import 'package:dompetku_application/db/db_transaksi.dart';
+import 'package:dompetku_application/notifer/notifiers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart'; // Untuk format tanggal & waktu
 
 class ModalPemasukanScreen extends StatefulWidget {
   @override
@@ -134,10 +137,34 @@ class _ModalPemasukanScreenState extends State<ModalPemasukanScreen> {
               children: [
                 _buildButton('Batal', Colors.red, () => Navigator.pop(context)),
                 SizedBox(width: 10),
-                _buildButton('Simpan', Color(0xFF7F56D9), () {
-                  print('Uang Masuk: ${uangMasukController.text}');
-                  print('Kiloan: ${kiloanController.text}');
-                  print('Catatan: ${catatanController.text}');
+                _buildButton('Simpan', Color(0xFF7F56D9), () async {
+                  final db = DBTransaksi();
+
+                  final now = DateTime.now();
+                  final tanggal = DateFormat('yyyy-MM-dd').format(now);
+                  final waktu = DateFormat('HH:mm:ss').format(now);
+
+                  final uangMasuk =
+                      double.tryParse(uangMasukController.text) ?? 0.0;
+                  final kiloan = double.tryParse(kiloanController.text) ?? 0.0;
+                  final catatan = catatanController.text.trim();
+
+                  final data = {
+                    'tanggal': tanggal,
+                    'waktu': waktu,
+                    'uang_masuk': uangMasuk,
+                    'maggot_terjual_kg': kiloan,
+                    'keterangan': catatan,
+                  };
+
+                  await db.insertPemasukan(data);
+
+                  // Update pemasukanNotifier untuk trigger pembaruan tampilan
+                  pemasukanNotifier.value = !pemasukanNotifier.value;
+
+                  print('✅ Data berhasil disimpan:');
+                  print(data);
+
                   Navigator.pop(context);
                 }),
               ],

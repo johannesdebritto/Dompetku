@@ -1,4 +1,5 @@
 import 'package:dompetku_application/card/tabungan_card.dart';
+import 'package:dompetku_application/tabungan/tabungan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -22,12 +23,22 @@ class ProgressWidget extends StatelessWidget {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const Spacer(),
               TextButton(
-                onPressed: () {},
-                child: const Text('Lihat semua',
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.blue)),
+                onPressed: () {
+                  // Arahkan ke halaman TabunganScreen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const TabunganScreen()),
+                  );
+                },
+                child: const Text(
+                  'Lihat semua',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.blue,
+                  ),
+                ),
               ),
             ],
           ),

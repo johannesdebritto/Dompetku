@@ -1,3 +1,5 @@
+import 'package:dompetku_application/db/db_transaksi.dart';
+import 'package:dompetku_application/notifer/notifiers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -7,18 +9,17 @@ class ModalPengeluaranScreen extends StatefulWidget {
 }
 
 class _ModalPengeluaranScreenState extends State<ModalPengeluaranScreen> {
-  final uangMasukController = TextEditingController();
-  final kiloanController = TextEditingController();
-  final catatanController = TextEditingController();
+  final _amountController = TextEditingController();
+  final _noteController = TextEditingController();
 
-  final baseTextStyle = GoogleFonts.inter(fontWeight: FontWeight.w500);
-  final boldStyle = GoogleFonts.inter(fontWeight: FontWeight.bold);
+  final _baseTextStyle = GoogleFonts.inter(fontWeight: FontWeight.w500);
+  final _boldStyle = GoogleFonts.inter(fontWeight: FontWeight.bold);
 
   BoxDecoration get _decoration => BoxDecoration(
         border: Border.all(color: Colors.grey.shade400),
         borderRadius: BorderRadius.circular(8),
         color: Colors.white,
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2, 2))
         ],
       );
@@ -27,23 +28,23 @@ class _ModalPengeluaranScreenState extends State<ModalPengeluaranScreen> {
     required String label,
     required TextEditingController controller,
     String? prefix,
-    String? suffix,
     TextInputType keyboardType = TextInputType.text,
-    String? hint,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: boldStyle),
-        SizedBox(height: 4),
+        Text(label, style: _boldStyle),
+        const SizedBox(height: 4),
         Row(
           children: [
             if (prefix != null)
               Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                  decoration: _decoration,
-                  child: Text(prefix, style: baseTextStyle)),
-            if (prefix != null) SizedBox(width: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                decoration: _decoration,
+                child: Text(prefix, style: _baseTextStyle),
+              ),
+            if (prefix != null) const SizedBox(width: 8),
             Expanded(
               child: Container(
                 decoration: _decoration,
@@ -51,21 +52,15 @@ class _ModalPengeluaranScreenState extends State<ModalPengeluaranScreen> {
                   controller: controller,
                   keyboardType: keyboardType,
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                     border: InputBorder.none,
-                    hintText: hint ?? 'Masukkan $label',
-                    hintStyle: baseTextStyle,
+                    hintText: 'Masukkan $label',
+                    hintStyle: _baseTextStyle,
                   ),
                   style: GoogleFonts.inter(fontWeight: FontWeight.w600),
                 ),
               ),
             ),
-            if (suffix != null) SizedBox(width: 8),
-            if (suffix != null)
-              Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                  decoration: _decoration,
-                  child: Text(suffix, style: baseTextStyle)),
           ],
         ),
       ],
@@ -77,16 +72,20 @@ class _ModalPengeluaranScreenState extends State<ModalPengeluaranScreen> {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          padding: EdgeInsets.symmetric(vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 15),
         ),
         onPressed: onPressed,
-        child: Text(label,
-            style: GoogleFonts.inter(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600)),
+        child: Text(
+          label,
+          style: GoogleFonts.inter(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }
@@ -96,7 +95,7 @@ class _ModalPengeluaranScreenState extends State<ModalPengeluaranScreen> {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,41 +103,75 @@ class _ModalPengeluaranScreenState extends State<ModalPengeluaranScreen> {
             Row(
               children: [
                 Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: _decoration,
-                    child: Icon(Icons.money_off, color: Colors.black54)),
-                SizedBox(width: 8),
-                Text('Catat Pengeluaran',
-                    style: GoogleFonts.inter(
-                        fontSize: 18, fontWeight: FontWeight.bold)),
+                  padding: const EdgeInsets.all(8),
+                  decoration: _decoration,
+                  child: const Icon(Icons.money_off, color: Colors.black54),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Catat Pengeluaran',
+                  style: GoogleFonts.inter(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             _buildInputField(
-                label: 'Uang Masuk',
-                controller: uangMasukController,
-                prefix: 'Rp',
-                keyboardType: TextInputType.number,
-                hint: 'Masukkan nominal'),
-            SizedBox(height: 10),
+              label: 'Jumlah Pengeluaran',
+              controller: _amountController,
+              prefix: 'Rp',
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 10),
             _buildInputField(
-                label: 'Kiloan',
-                controller: kiloanController,
-                suffix: 'Kg',
-                keyboardType: TextInputType.number,
-                hint: 'Masukkan berat'),
-            SizedBox(height: 10),
-            _buildInputField(label: 'Catatan', controller: catatanController),
-            SizedBox(height: 20),
+              label: 'Keterangan',
+              controller: _noteController,
+            ),
+            const SizedBox(height: 20),
             Row(
               children: [
                 _buildButton('Batal', Colors.red, () => Navigator.pop(context)),
-                SizedBox(width: 10),
-                _buildButton('Simpan', Color(0xFF7F56D9), () {
-                  print('Uang Masuk: ${uangMasukController.text}');
-                  print('Kiloan: ${kiloanController.text}');
-                  print('Catatan: ${catatanController.text}');
-                  Navigator.pop(context);
+                const SizedBox(width: 10),
+                _buildButton('Simpan', const Color(0xFF7F56D9), () async {
+                  final jumlah = double.tryParse(_amountController.text) ?? 0.0;
+                  final keterangan = _noteController.text.trim();
+                  final now = DateTime.now();
+
+                  // Validasi agar jumlah tidak negatif
+                  if (jumlah <= 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(
+                              'Jumlah pengeluaran harus lebih besar dari 0')),
+                    );
+                    return; // Keluar dari fungsi jika validasi gagal
+                  }
+
+                  final data = {
+                    'tanggal':
+                        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}",
+                    'waktu':
+                        "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}",
+                    'nominal_pengeluaran': jumlah,
+                    'keterangan': keterangan,
+                  };
+
+                  final db = DBTransaksi();
+                  await db.insertPengeluaran(data);
+
+                  // Memanggil notifier untuk memberitahukan widget pengeluaranItem agar memperbarui tampilannya
+                  pengeluaranNotifier.value = !pengeluaranNotifier.value;
+
+                  // Debug log untuk memastikan data yang disimpan
+                  print('✅ Data pengeluaran berhasil disimpan:');
+                  print('Jumlah: $jumlah');
+                  print('Keterangan: $keterangan');
+                  print('Tanggal: ${data['tanggal']}');
+                  print('Waktu: ${data['waktu']}');
+
+                  Navigator.pop(context); // Tutup modal setelah simpan
                 }),
               ],
             ),
