@@ -1,3 +1,5 @@
+import 'package:dompetku_application/db/db_notes.dart';
+import 'package:dompetku_application/notifer/notifiers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -12,6 +14,8 @@ class _ModalCatatanScreenState extends State<ModalCatatanScreen> {
 
   final baseTextStyle = GoogleFonts.inter(fontWeight: FontWeight.w500);
   final boldStyle = GoogleFonts.inter(fontWeight: FontWeight.bold);
+
+  final dbNotes = DBNotes(); // Instance database
 
   BoxDecoration get _decoration => BoxDecoration(
         border: Border.all(color: Colors.grey.shade400),
@@ -75,6 +79,36 @@ class _ModalCatatanScreenState extends State<ModalCatatanScreen> {
     );
   }
 
+  Future<void> _simpanCatatan() async {
+    final judul = judulController.text.trim();
+    final isi = isiController.text.trim();
+
+    if (isi.isEmpty) {
+      print('❌ Gagal menyimpan catatan: isi catatan kosong');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Isi catatan tidak boleh kosong')),
+      );
+      return;
+    }
+
+    try {
+      await dbNotes.insertNote({
+        'judul': judul,
+        'isi_catatan': isi,
+      });
+
+      notedNotifier.value = !notedNotifier.value;
+      Navigator.pop(context);
+
+      print('✅ Catatan berhasil disimpan: Judul="$judul", Isi="$isi"');
+    } catch (e) {
+      print('🚫 Terjadi kesalahan saat menyimpan catatan: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Terjadi kesalahan saat menyimpan catatan')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -115,13 +149,7 @@ class _ModalCatatanScreenState extends State<ModalCatatanScreen> {
               children: [
                 _buildButton('Batal', Colors.red, () => Navigator.pop(context)),
                 SizedBox(width: 10),
-                _buildButton('Simpan', Color(0xFF7F56D9), () {
-                  final tanggal = DateTime.now().toIso8601String();
-                  print('Judul: ${judulController.text}');
-                  print('Isi: ${isiController.text}');
-                  print('Tanggal: $tanggal');
-                  Navigator.pop(context);
-                }),
+                _buildButton('Simpan', Color(0xFF7F56D9), _simpanCatatan),
               ],
             ),
           ],

@@ -125,9 +125,9 @@ class _ModalPemasukanScreenState extends State<ModalPemasukanScreen> {
                 hint: 'Masukkan nominal'),
             SizedBox(height: 10),
             _buildInputField(
-                label: 'Kiloan',
+                label: 'Ons',
                 controller: kiloanController,
-                suffix: 'Kg',
+                suffix: 'Ons',
                 keyboardType: TextInputType.number,
                 hint: 'Masukkan berat'),
             SizedBox(height: 10),

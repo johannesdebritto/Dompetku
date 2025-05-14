@@ -1,5 +1,7 @@
+import 'package:dompetku_application/db/db_tabungan.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dompetku_application/notifer/notifiers.dart';
 
 class ModaltabunganScreen extends StatefulWidget {
   @override
@@ -15,6 +17,8 @@ class _ModaltabunganScreenState extends State<ModaltabunganScreen> {
 
   final baseTextStyle = GoogleFonts.inter(fontWeight: FontWeight.w500);
   final boldStyle = GoogleFonts.inter(fontWeight: FontWeight.bold);
+
+  final _dbTabungan = DBTabungan(); // Inisialisasi DB
 
   BoxDecoration get _decoration => BoxDecoration(
         border: Border.all(color: Colors.grey.shade400),
@@ -103,6 +107,44 @@ class _ModaltabunganScreenState extends State<ModaltabunganScreen> {
     }
   }
 
+  Future<void> _simpanTabungan() async {
+    if (namaTabunganController.text.isEmpty ||
+        targetNominalController.text.isEmpty ||
+        tanggalMulaiController.text.isEmpty ||
+        tanggalTargetController.text.isEmpty ||
+        catatanController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Harap isi semua data tabungan')),
+      );
+      return;
+    }
+
+    try {
+      final tabungan = {
+        'nama_tabungan': namaTabunganController.text,
+        'target_uang': double.tryParse(targetNominalController.text) ?? 0.0,
+        'tanggal_mulai': tanggalMulaiController.text,
+        'tanggal_target': tanggalTargetController.text,
+        'catatan': catatanController.text,
+      };
+
+      await _dbTabungan.insertTabungan(tabungan);
+
+      // ✅ Trigger notifikasi ke UI
+      tabunganNotifier.value = !tabunganNotifier.value;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Tabungan berhasil disimpan')),
+      );
+
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menyimpan: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -155,14 +197,7 @@ class _ModaltabunganScreenState extends State<ModaltabunganScreen> {
               children: [
                 _buildButton('Batal', Colors.red, () => Navigator.pop(context)),
                 SizedBox(width: 10),
-                _buildButton('Simpan', Color(0xFF7F56D9), () {
-                  print('Nama: ${namaTabunganController.text}');
-                  print('Target: ${targetNominalController.text}');
-                  print('Mulai: ${tanggalMulaiController.text}');
-                  print('Target Tanggal: ${tanggalTargetController.text}');
-                  print('Catatan: ${catatanController.text}');
-                  Navigator.pop(context);
-                }),
+                _buildButton('Simpan', Color(0xFF7F56D9), _simpanTabungan),
               ],
             ),
           ],

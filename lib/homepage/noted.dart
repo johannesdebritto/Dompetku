@@ -1,10 +1,20 @@
+import 'package:dompetku_application/card/empty_noted.dart';
 import 'package:dompetku_application/card/noted_card.dart';
 import 'package:dompetku_application/noted/noted_screen.dart';
+import 'package:dompetku_application/db/db_notes.dart'; // Import database
+import 'package:dompetku_application/notifer/notifiers.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class NoteWidget extends StatelessWidget {
   const NoteWidget({super.key});
+
+  Future<bool> _checkIfNotesExist() async {
+    final db = DBNotes();
+    final notes = await db.getNotes();
+    return notes.isNotEmpty;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +35,6 @@ class NoteWidget extends StatelessWidget {
               const Spacer(),
               TextButton(
                 onPressed: () {
-                  // Arahkan ke halaman NotedScreen
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -44,8 +53,25 @@ class NoteWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 5),
-          const NotedCardScreen(), // Panggil widget dari file terpisah
-          // const EmptyNotesScreen(),
+          ValueListenableBuilder(
+            valueListenable: notedNotifier,
+            builder: (context, _, __) {
+              return FutureBuilder<bool>(
+                future: _checkIfNotesExist(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasData && snapshot.data == true) {
+                    return const NotedCardScreen();
+                  } else {
+                    return const EmptyNotesScreen();
+                  }
+                },
+              );
+            },
+          ),
         ],
       ),
     );

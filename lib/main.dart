@@ -7,8 +7,12 @@ import 'package:dompetku_application/widgets/bottom_navbar.dart';
 import 'package:dompetku_application/widgets/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:intl/date_symbol_data_local.dart'; // tambahkan ini
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // tambahkan ini
+  await initializeDateFormatting(
+      'id_ID', null); // inisialisasi locale Indonesia
   runApp(const MyApp());
 }
 
