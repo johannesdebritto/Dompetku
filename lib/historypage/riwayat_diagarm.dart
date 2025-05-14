@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:dompetku_application/db/db_transaksi.dart'; // Import DBTransaksi
 
 class DiagramScreen extends StatefulWidget {
   DiagramScreen({Key? key}) : super(key: key);
@@ -9,30 +10,72 @@ class DiagramScreen extends StatefulWidget {
 }
 
 class _DiagramScreenState extends State<DiagramScreen> {
-  final Map<String, double> dataMap = {
-    "Pemasukan": 70,
-    "Pengeluaran": 30,
+  Map<String, double> dataMap = {
+    "Pemasukan": 0,
+    "Pengeluaran": 0,
   };
 
   final colorList = <Color>[
-    Colors.greenAccent, // More vibrant green
-    Colors.redAccent, // More vibrant red
+    Colors.greenAccent,
+    Colors.redAccent,
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final db = DBTransaksi();
+
+    // Ambil data pemasukan
+    final pemasukanData = await db.getPemasukan();
+    double totalPemasukan = 0.0;
+    for (var item in pemasukanData) {
+      totalPemasukan += (item['uang_masuk'] ?? 0.0) as double;
+    }
+
+    // Ambil data pengeluaran
+    final pengeluaranData = await db.getPengeluaran();
+    double totalPengeluaran = 0.0;
+    for (var item in pengeluaranData) {
+      totalPengeluaran += (item['nominal_pengeluaran'] ?? 0.0) as double;
+    }
+
+    // Cegah pembagian dengan nol
+    if (totalPemasukan == 0 && totalPengeluaran == 0) {
+      setState(() {
+        dataMap = {
+          "Pemasukan": 0,
+          "Pengeluaran": 0,
+        };
+      });
+      return;
+    }
+
+    setState(() {
+      dataMap = {
+        "Pemasukan": totalPemasukan,
+        "Pengeluaran": totalPengeluaran,
+      };
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    double total = dataMap["Pemasukan"]! + dataMap["Pengeluaran"]!;
     return Padding(
       padding: EdgeInsets.all(20.0),
       child: Center(
         child: Container(
           padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.black, // Changed the box color to black
+            color: Colors.black,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black
-                    .withOpacity(0.5), // Darker shadow for modern effect
+                color: Colors.black.withOpacity(0.5),
                 blurRadius: 12,
                 offset: Offset(0, 4),
               ),
@@ -44,10 +87,10 @@ class _DiagramScreenState extends State<DiagramScreen> {
               Text(
                 'DIAGRAM KEUANGAN',
                 style: TextStyle(
-                  fontSize: 22, // Increased font size
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Inter',
-                  color: Colors.white, // Changed text color to white
+                  color: Colors.white,
                 ),
               ),
               SizedBox(height: 20),
@@ -55,8 +98,8 @@ class _DiagramScreenState extends State<DiagramScreen> {
                 dataMap: dataMap,
                 colorList: colorList,
                 chartType: ChartType.ring,
-                chartRadius: 80, // Ukuran chart
-                ringStrokeWidth: 30, // Ketebalan ring
+                chartRadius: 80,
+                ringStrokeWidth: 30,
                 legendOptions: LegendOptions(showLegends: false),
                 chartValuesOptions: ChartValuesOptions(
                   showChartValuesInPercentage: true,
@@ -69,9 +112,10 @@ class _DiagramScreenState extends State<DiagramScreen> {
                   final color = entry.key == "Pemasukan"
                       ? Colors.greenAccent
                       : Colors.redAccent;
+                  final percent =
+                      total == 0 ? 0 : (entry.value / total * 100).toInt();
                   return Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 4), // Small vertical spacing
+                    padding: EdgeInsets.symmetric(vertical: 4),
                     child: Row(
                       children: [
                         Container(
@@ -84,12 +128,12 @@ class _DiagramScreenState extends State<DiagramScreen> {
                         ),
                         SizedBox(width: 8),
                         Text(
-                          '${entry.key}: ${entry.value.toInt()}%',
+                          '${entry.key}: $percent%',
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.w500,
-                            color: Colors.white, // White text for labels
+                            color: Colors.white,
                           ),
                         ),
                       ],

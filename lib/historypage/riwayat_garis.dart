@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:dompetku_application/historypage/riwayat_filter.dart';
+import 'package:intl/intl.dart';
+import 'package:dompetku_application/db/db_transaksi.dart';
 
 class RiwayatGarisScreen extends StatefulWidget {
   const RiwayatGarisScreen({super.key});
@@ -10,43 +11,93 @@ class RiwayatGarisScreen extends StatefulWidget {
 }
 
 class _RiwayatGarisScreenState extends State<RiwayatGarisScreen> {
-  final List<double> pemasukanData = [
-    3000,
-    5000,
-    4000,
-    7000,
-    6500,
-    9000,
-    12000
-  ];
-  final List<String> bulanLabels = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'Mei',
-    'Jun',
-    'Jul'
-  ];
-  String selectedFilter = '1 Bulan';
+  List<double> totalPerHari = List.filled(30, 0.0);
+  DateTime? startDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _findStartDateDanLoad();
+  }
+
+  Future<void> _findStartDateDanLoad() async {
+    final db = DBTransaksi();
+    DateTime? foundDate;
+
+    // Mencari tanggal pertama yang punya transaksi (baik pemasukan atau pengeluaran)
+    for (int i = 0; i < 365; i++) {
+      final date = DateTime.now().subtract(Duration(days: i));
+      final tanggal = DateFormat('yyyy-MM-dd').format(date);
+
+      final pemasukan = await db.getPemasukanByTanggal(tanggal);
+      final pengeluaran = await db.getPengeluaranByTanggal(tanggal);
+
+      if (pemasukan.isNotEmpty || pengeluaran.isNotEmpty) {
+        foundDate = date;
+        break;
+      }
+    }
+
+    if (foundDate != null) {
+      final now = DateTime.now();
+      final daysSince = now.difference(foundDate).inDays;
+      final periodeKe = daysSince ~/ 30;
+      final calculatedStart = foundDate.add(Duration(days: periodeKe * 30));
+
+      setState(() {
+        startDate = calculatedStart;
+      });
+
+      _loadTotalPerHari();
+    }
+  }
+
+  Future<void> _loadTotalPerHari() async {
+    if (startDate == null) return;
+
+    final db = DBTransaksi();
+    List<double> totals = [];
+
+    // Load data 30 hari berdasarkan startDate
+    for (int i = 0; i < 30; i++) {
+      DateTime date = startDate!.add(Duration(days: i));
+      String tanggal = DateFormat('yyyy-MM-dd').format(date);
+
+      final pemasukan = await db.getPemasukanByTanggal(tanggal);
+      final pengeluaran = await db.getPengeluaranByTanggal(tanggal);
+
+      double totalPemasukan = 0.0;
+      for (var item in pemasukan) {
+        totalPemasukan += (item['uang_masuk'] ?? 0.0) as double;
+      }
+
+      double totalPengeluaran = 0.0;
+      for (var item in pengeluaran) {
+        totalPengeluaran += (item['nominal_pengeluaran'] ?? 0.0) as double;
+      }
+
+      totals.add(totalPemasukan - totalPengeluaran);
+    }
+
+    setState(() {
+      totalPerHari = totals;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (startDate == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Column(
       children: [
         const Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: Text(
-            'Grafik Keuangan',
+            'Prediksi Keuangan 30 Hari',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-        ),
-        RiwayatFilterScreen(
-          onFilterChanged: (filter) {
-            setState(() {
-              selectedFilter = filter;
-            });
-          },
         ),
         const SizedBox(height: 10),
         SizedBox(
@@ -66,29 +117,25 @@ class _RiwayatGarisScreenState extends State<RiwayatGarisScreen> {
                   sideTitles: SideTitles(
                     showTitles: true,
                     reservedSize: 30,
-                    interval: 1,
+                    interval: 5,
                     getTitlesWidget: (value, meta) {
                       int index = value.toInt();
-                      return SideTitleWidget(
-                        axisSide: meta.axisSide,
-                        child: Text(
-                          (index >= 0 && index < bulanLabels.length)
-                              ? bulanLabels[index]
-                              : '',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      );
+                      if (index % 5 == 0 && index >= 0 && index < 30) {
+                        final day = startDate!.add(Duration(days: index));
+                        return SideTitleWidget(
+                          axisSide: meta.axisSide,
+                          child: Text(DateFormat('d').format(day)),
+                        );
+                      }
+                      return const SizedBox.shrink();
                     },
                   ),
                 ),
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 40,
-                    interval: 3000,
+                    reservedSize: 50,
+                    interval: 50000,
                     getTitlesWidget: (value, _) => Text(
                       '${value.toInt()}',
                       style: const TextStyle(fontSize: 12),
@@ -108,25 +155,24 @@ class _RiwayatGarisScreenState extends State<RiwayatGarisScreen> {
                     Border.all(color: Colors.black.withOpacity(0.1), width: 1),
               ),
               minX: 0,
-              maxX: (pemasukanData.length - 1).toDouble(),
+              maxX: 29,
               minY: 0,
-              maxY: pemasukanData.reduce((a, b) => a > b ? a : b) + 2000,
+              maxY: 200000,
               lineBarsData: [
                 LineChartBarData(
                   spots: List.generate(
-                    pemasukanData.length,
-                    (i) => FlSpot(i.toDouble(), pemasukanData[i]),
+                    totalPerHari.length,
+                    (i) => FlSpot(i.toDouble(), totalPerHari[i]),
                   ),
-                  isCurved: false, // <- garis lurus bro
-                  color: Colors.blueAccent,
-                  barWidth: 4,
-                  isStrokeCapRound: true,
+                  isCurved: false,
+                  color: Colors.green,
+                  barWidth: 3,
                   belowBarData: BarAreaData(
                     show: true,
                     gradient: LinearGradient(
                       colors: [
-                        Colors.blueAccent.withOpacity(0.3),
-                        Colors.blueAccent.withOpacity(0.0),
+                        Colors.green.withOpacity(0.3),
+                        Colors.green.withOpacity(0.0),
                       ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -136,8 +182,8 @@ class _RiwayatGarisScreenState extends State<RiwayatGarisScreen> {
                     show: true,
                     getDotPainter: (spot, percent, barData, index) {
                       return FlDotCirclePainter(
-                        radius: 6,
-                        color: Colors.blueAccent,
+                        radius: 4,
+                        color: Colors.green,
                         strokeColor: Colors.white,
                         strokeWidth: 2,
                       );

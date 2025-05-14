@@ -92,4 +92,26 @@ class DBTransaksi {
       whereArgs: [id],
     );
   }
+
+  // Mengambil pemasukan berdasarkan tanggal
+  Future<List<Map<String, dynamic>>> getPemasukanByTanggal(
+      String tanggal) async {
+    final db = await database;
+    return await db.query(
+      'pemasukan',
+      where: 'tanggal = ?',
+      whereArgs: [tanggal],
+    );
+  }
+
+  // Mengambil pengeluaran berdasarkan tanggal
+  Future<List<Map<String, dynamic>>> getPengeluaranByTanggal(
+      String tanggal) async {
+    final db = await database;
+    return await db.query(
+      'pengeluaran',
+      where: 'tanggal = ?',
+      whereArgs: [tanggal],
+    );
+  }
 }
