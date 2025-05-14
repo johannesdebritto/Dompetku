@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dompetku_application/db/db_transaksi.dart';
-import 'package:intl/intl.dart'; // Import intl
-import 'package:dompetku_application/notifer/notifiers.dart'; // Pastikan ini diimport
+import 'package:intl/intl.dart';
+import 'package:dompetku_application/notifer/notifiers.dart';
 
 class TotalScreen extends StatefulWidget {
   @override
@@ -17,14 +17,12 @@ class _TotalScreenState extends State<TotalScreen> {
     super.initState();
     _loadTotal();
 
-    // Tambahkan listener pada pemasukan dan pengeluaran
     pemasukanNotifier.addListener(_loadTotal);
     pengeluaranNotifier.addListener(_loadTotal);
   }
 
   @override
   void dispose() {
-    // Hapus listener saat widget dihapus
     pemasukanNotifier.removeListener(_loadTotal);
     pengeluaranNotifier.removeListener(_loadTotal);
     super.dispose();
@@ -33,21 +31,18 @@ class _TotalScreenState extends State<TotalScreen> {
   Future<void> _loadTotal() async {
     final db = DBTransaksi();
 
-    // Ambil data pemasukan
     final pemasukanData = await db.getPemasukan();
     double totalPemasukan = 0.0;
     for (var item in pemasukanData) {
       totalPemasukan += (item['uang_masuk'] ?? 0.0) as double;
     }
 
-    // Ambil data pengeluaran
     final pengeluaranData = await db.getPengeluaran();
     double totalPengeluaran = 0.0;
     for (var item in pengeluaranData) {
       totalPengeluaran += (item['nominal_pengeluaran'] ?? 0.0) as double;
     }
 
-    // Hitung total (pemasukan - pengeluaran)
     double totalKeuangan = totalPemasukan - totalPengeluaran;
 
     setState(() {
@@ -57,7 +52,6 @@ class _TotalScreenState extends State<TotalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Format total dengan pemisah ribuan
     String formattedTotal = NumberFormat.currency(
       locale: 'id_ID',
       symbol: 'Rp ',
@@ -70,7 +64,10 @@ class _TotalScreenState extends State<TotalScreen> {
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
         decoration: BoxDecoration(
-          color: Colors.black, // Latar item
+          image: DecorationImage(
+            image: AssetImage('assets/images/heroapp2.png'),
+            fit: BoxFit.cover,
+          ),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -82,9 +79,8 @@ class _TotalScreenState extends State<TotalScreen> {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start, // Rata kiri semua
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Judul di tengah
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -105,10 +101,7 @@ class _TotalScreenState extends State<TotalScreen> {
                 ),
               ],
             ),
-
-            SizedBox(height: 10), // Lebih dekatkan jaraknya dengan Total
-
-            // Baris icon Total + tulisan Total, rata kiri
+            SizedBox(height: 10),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -129,13 +122,9 @@ class _TotalScreenState extends State<TotalScreen> {
                 ),
               ],
             ),
-
-            SizedBox(
-                height: 4), // Lebih dekatkan jarak antara Total dan nominal
-
-            // Nominal di bawah, rata kiri
+            SizedBox(height: 4),
             Text(
-              formattedTotal, // Langsung pakai string yang sudah diformat lengkap
+              formattedTotal,
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,

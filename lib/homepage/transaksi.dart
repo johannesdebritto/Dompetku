@@ -21,7 +21,10 @@ class _TransaksiScreenState extends State<TransaksiScreen> {
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 0),
         decoration: BoxDecoration(
-          color: Colors.black,
+          image: DecorationImage(
+            image: AssetImage('assets/images/heroapp2.png'),
+            fit: BoxFit.cover,
+          ),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
