@@ -1,4 +1,5 @@
 import 'package:dompetku_application/db/db_tabungan.dart';
+import 'package:dompetku_application/modals/modal_tambah_tabungan.dart';
 import 'package:dompetku_application/notifer/notifiers.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -17,8 +18,6 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
   void initState() {
     super.initState();
     fetchTabungan();
-
-    // Dengarkan perubahan dari notifier
     tabunganNotifier.addListener(fetchTabungan);
   }
 
@@ -50,7 +49,12 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
           final String nama = tabungan['nama_tabungan'] ?? '-';
           final double target = (tabungan['target_uang'] ?? 0).toDouble();
           final String tanggalTarget = tabungan['tanggal_target'] ?? '-';
-          final double progress = 0.0; // Placeholder
+          final double uangTabungan =
+              (tabungan['uang_tabungan'] ?? 0).toDouble();
+
+          // Hitung progress
+          final double progress =
+              (target == 0) ? 0.0 : (uangTabungan / target).clamp(0.0, 1.0);
 
           return Container(
             width: cardWidth,
@@ -61,9 +65,10 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, 4)),
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
               ],
             ),
             child: Column(
@@ -71,6 +76,7 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
               children: [
                 Row(
                   children: [
+                    // ID Box
                     Container(
                       width: 28,
                       height: 28,
@@ -88,6 +94,8 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
                       ),
                     ),
                     const SizedBox(width: 10),
+
+                    // Nama Tabungan
                     Expanded(
                       child: Text(
                         nama,
@@ -98,38 +106,76 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.delete,
-                            color: Colors.white, size: 18),
-                        onPressed: () async {
-                          await DBTabungan().deleteTabungan(id);
-                          tabunganNotifier.value =
-                              !tabunganNotifier.value; // ⬅️ Trigger perubahan
-                        },
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
+
+                    // Tombol Hapus dan Plus
+                    Row(
+                      children: [
+                        // Tombol Hapus
+                        Container(
+                          width: 32,
+                          height: 32,
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.delete,
+                                color: Colors.white, size: 18),
+                            onPressed: () async {
+                              await DBTabungan().deleteTabungan(id);
+                              tabunganNotifier.value = !tabunganNotifier.value;
+                            },
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        ),
+
+                        // Tombol Plus
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.add,
+                                color: Colors.white, size: 18),
+                            onPressed: () {
+                              // Default jumlah uang bisa diganti jadi input jika perlu
+                              showDialog(
+                                context: context,
+                                builder: (_) => ModalTambahTabunganScreen(
+                                  idTabungan: id,
+                                ),
+                              );
+                            },
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 12),
+
+                // Progress Keuangan
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(formatter.format(0),
+                    Text(formatter.format(uangTabungan),
                         style: const TextStyle(fontWeight: FontWeight.w600)),
                     Text(formatter.format(target),
                         style: const TextStyle(fontWeight: FontWeight.w600)),
                   ],
                 ),
+
                 const SizedBox(height: 6),
+
+                // Progress Bar
                 Stack(
                   children: [
                     Container(
@@ -160,7 +206,9 @@ class _TabunganCardScreenState extends State<TabunganCardScreen> {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 12),
+
                 Text(
                   'Target Tercapai: $tanggalTarget',
                   style: const TextStyle(

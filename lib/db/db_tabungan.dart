@@ -14,12 +14,13 @@ class DBTabungan {
       path,
       version: 1,
       onCreate: (db, version) async {
-        // Membuat tabel Tabungan
+// Membuat tabel Tabungan
         await db.execute(''' 
   CREATE TABLE tabungan(
     id_tabungan INTEGER PRIMARY KEY AUTOINCREMENT,
     nama_tabungan TEXT,
     target_uang REAL,
+    uang_tabungan REAL,
     tanggal_mulai TEXT,
     tanggal_target TEXT,
     catatan TEXT
@@ -62,6 +63,17 @@ class DBTabungan {
     await db.update(
       'tabungan',
       tabungan,
+      where: 'id_tabungan = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // ✅ Fungsi baru: Update hanya kolom uang_tabungan berdasarkan ID
+  Future<void> updateUangTabunganById(int id, double uangBaru) async {
+    final db = await database;
+    await db.update(
+      'tabungan',
+      {'uang_tabungan': uangBaru},
       where: 'id_tabungan = ?',
       whereArgs: [id],
     );
